@@ -1,5 +1,10 @@
 # 🚀 DBSCAN Dart Implementation
 
+[![pub package](https://img.shields.io/pub/v/dbscan_dart.svg)](https://pub.dev/packages/dbscan_dart)
+[![pub points](https://img.shields.io/pub/points/dbscan_dart)](https://pub.dev/packages/dbscan_dart/score)
+[![popularity](https://img.shields.io/pub/popularity/dbscan_dart)](https://pub.dev/packages/dbscan_dart/score)
+[![likes](https://img.shields.io/pub/likes/dbscan_dart)](https://pub.dev/packages/dbscan_dart/score)
+
 A high-performance, pure-Dart implementation of the DBSCAN clustering algorithm with spatial optimization. This library works with any data type that implements the `SpatialPoint` interface, requiring only `id()`, `distanceTo(SpatialPoint)`, `dimension()`, and `atDimension(int)` methods-making it versatile for n-D, geospatial, or custom distance metrics.
 
 ## ✨ Features
