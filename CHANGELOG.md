@@ -15,6 +15,31 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`dbscan_dart` - `v1.1.1`](#dbscan_dart---v111)
+
+---
+
+#### `dbscan_dart` - `v1.1.1`
+
+ - **DOCS**(readme): Add pub.dev badges. ([6715bba2](https://github.com/helpisdev/dbscan_dart.git/commit/6715bba290785ec06a4ef4a9885e1f5aff6f4838))
+
+## 1.1.1
+
+ - **DOCS**(readme): Add pub.dev badges. ([6715bba2](https://github.com/helpisdev/dbscan_dart.git/commit/6715bba290785ec06a4ef4a9885e1f5aff6f4838))
+
+
+## 2025-06-06
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`dbscan_dart` - `v1.1.0`](#dbscan_dart---v110)
 
 ---
