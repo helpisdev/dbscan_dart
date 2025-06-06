@@ -1,0 +1,16 @@
+name: dbscan_dart
+repository: https://github.com/helpisdev/dbscan_dart.git
+packages:
+  - .
+
+sdkPath: auto
+command:
+  bootstrap:
+    usePubspecOverrides: true
+  version:
+    includeCommitId: true
+    linkToCommits: true
+    workspaceChangelog: true
+    updateGitTagRefs: true
+    includeScopes: true
+    branch: main
