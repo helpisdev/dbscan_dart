@@ -1,0 +1,23 @@
+name: google_maps_clustering_example
+description: A Flutter example using DBSCAN for Google Maps marker clustering
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.0.0 <4.0.0"
+
+dependencies:
+  cupertino_icons: ^1.0.2
+  dbscan_dart:
+    path: ../../
+  flutter:
+    sdk: flutter
+  google_maps_flutter: ^2.5.0
+
+dev_dependencies:
+  flutter_lints: ^6.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
