@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`dbscan_dart` - `v1.1.2`](#dbscan_dart---v112)
+
+---
+
+#### `dbscan_dart` - `v1.1.2`
+
+ - **FIX**(pubspec): Update SDK constraint. ([79463f0a](https://github.com/helpisdev/dbscan_dart.git/commit/79463f0a19ea4c3072ce8ac243d397e3aa00d3dc))
+
+## 1.1.2
+
+ - **FIX**(pubspec): Update SDK constraint. ([79463f0a](https://github.com/helpisdev/dbscan_dart.git/commit/79463f0a19ea4c3072ce8ac243d397e3aa00d3dc))
+
+
 ## 2025-06-06
 
 ### Changes
