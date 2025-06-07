@@ -15,6 +15,31 @@ Packages with breaking changes:
 
 Packages with other changes:
 
+ - [`dbscan_dart` - `v1.1.3`](#dbscan_dart---v113)
+
+---
+
+#### `dbscan_dart` - `v1.1.3`
+
+ - **FIX**(pubspec): Downgrade meta dependency. ([7156f003](https://github.com/helpisdev/dbscan_dart.git/commit/7156f003fb418fb5a504ec8b72a266afc68a5504))
+
+## 1.1.3
+
+ - **FIX**(pubspec): Downgrade meta dependency. ([7156f003](https://github.com/helpisdev/dbscan_dart.git/commit/7156f003fb418fb5a504ec8b72a266afc68a5504))
+
+
+## 2025-06-07
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
  - [`dbscan_dart` - `v1.1.2`](#dbscan_dart---v112)
 
 ---
