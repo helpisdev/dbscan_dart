@@ -3,6 +3,31 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-06-11
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`dbscan_dart` - `v1.1.4`](#dbscan_dart---v114)
+
+---
+
+#### `dbscan_dart` - `v1.1.4`
+
+ - **REFACTOR**: Improve code formatting and readability. ([f2abfab8](https://github.com/helpisdev/dbscan_dart.git/commit/f2abfab865f232785961470b6f14ec919d427fff))
+
+## 1.1.4
+
+ - **REFACTOR**: Improve code formatting and readability. ([f2abfab8](https://github.com/helpisdev/dbscan_dart.git/commit/f2abfab865f232785961470b6f14ec919d427fff))
+
+
 ## 2025-06-07
 
 ### Changes
