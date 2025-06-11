@@ -44,8 +44,7 @@ class LatLngPoint implements SpatialPoint {
     final double dLat = (other.lat - lat) * math.pi / 180;
     final double dLng = (other.lng - lng) * math.pi / 180;
 
-    final double a =
-        math.sin(dLat / 2) * math.sin(dLat / 2) +
+    final double a = math.sin(dLat / 2) * math.sin(dLat / 2) +
         math.cos(lat1) *
             math.cos(lat2) *
             math.sin(dLng / 2) *

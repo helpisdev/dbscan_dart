@@ -5,7 +5,9 @@ import 'package:dbscan_dart/dbscan_dart.dart';
 class DBScanBenchmark extends BenchmarkBase {
   /// Creates a new DBScanBenchmark instance.
   DBScanBenchmark(this.points, this.eps, this.minPoints)
-    : super('DBScan(points=${points.length}, eps=$eps, minPoints=$minPoints)');
+      : super(
+          'DBScan(points=${points.length}, eps=$eps, minPoints=$minPoints)',
+        );
 
   /// The points to cluster.
   final List<SpatialPoint> points;
@@ -78,7 +80,7 @@ class KDTreeBenchmark extends BenchmarkBase {
 class RangeSearchBenchmark extends BenchmarkBase {
   /// Creates a new RangeSearchBenchmark instance.
   RangeSearchBenchmark(this.points, this.radius)
-    : super('rangeSearch(radius=$radius, ${points.length} points)');
+      : super('rangeSearch(radius=$radius, ${points.length} points)');
 
   /// The points to search.
   final List<SpatialPoint> points;
