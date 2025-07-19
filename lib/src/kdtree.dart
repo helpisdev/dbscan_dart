@@ -1,6 +1,7 @@
 import 'package:meta/meta.dart';
 
 import 'models/spatial_point.dart';
+import 'quickselect.dart';
 
 /// A node in a KD-Tree.
 ///
@@ -30,15 +31,23 @@ class Node {
 /// efficient range searches and nearest neighbor queries. This implementation
 /// is specifically optimized for the DBSCAN algorithm's range queries.
 ///
+/// **Performance Optimizations:**
+///
+/// - **Construction:** Uses Floyd-Rivest quickselect for O(n log n) tree building
+/// - **Memory Efficiency:** In-place partitioning eliminates list copying
+/// - **Range Search:** Iterative implementation with squared distance comparisons
+/// - **Pruning:** Dimension-specific radius conversion for optimal space pruning
+///
 /// The tree is built by recursively partitioning points along alternating
-/// dimensions. For example, in 2D space:
+/// dimensions using the median as the split point. For example, in 2D space:
 ///
 ///   - The root node splits points by x-coordinate.
 ///   - The next level splits points by y-coordinate.
 ///   - The next level splits by x-coordinate again, and so on.
 ///
 /// This structure allows for efficient pruning of the search space during
-/// queries.
+/// queries, achieving O(log n + k) range search complexity where k is the
+/// number of points found.
 @immutable
 class KDTree {
   /// Creates a new KD-Tree with the specified root node and dimensionality.
@@ -66,7 +75,14 @@ class KDTree {
       throw ArgumentError('Dimension must be positive');
     }
 
-    final Node? root = _recursivelyBuild(List<SpatialPoint>.from(points), 0, k);
+    final List<SpatialPoint> mutablePoints = List<SpatialPoint>.from(points);
+    final Node? root = _recursivelyBuild(
+      mutablePoints,
+      k,
+      0,
+      mutablePoints.length - 1,
+      0,
+    );
     return KDTree(root: root, k: k);
   }
 
@@ -76,39 +92,55 @@ class KDTree {
   /// The number of dimensions in the space.
   final int k;
 
-  /// Recursively builds a k-d tree from a list of points.
+  /// Recursively builds a k-d tree from a list of points using quickSelect for
+  /// partitioning.
+  ///
+  ///
+  /// This version operates entirely in-place on the provided list segment,
+  /// avoiding list copying for maximum performance.
   static Node? _recursivelyBuild(
     final List<SpatialPoint> points,
-    final int depth,
     final int k,
+    final int start,
+    final int end,
+    final int depth,
   ) {
-    if (points.isEmpty) {
+    if (start > end) {
       return null;
+    }
+    if (start == end) {
+      return Node(point: points[start]);
     }
 
     final int axis = depth % k;
+    final int medianIdx = start + (end - start) ~/ 2;
 
-    // Sort points by the current axis
-    points.sort((final SpatialPoint a, final SpatialPoint b) {
-      return a.atDimension(axis).compareTo(b.atDimension(axis));
-    });
+    quickSelect(
+      points,
+      medianIdx,
+      start,
+      end,
+      (final SpatialPoint a, final SpatialPoint b) {
+        return a.atDimension(axis).compareTo(b.atDimension(axis));
+      },
+    );
 
-    // Get median point
-    final int medianIdx = points.length ~/ 2;
     final SpatialPoint medianPoint = points[medianIdx];
 
-    // Create node and recursively build subtrees
-    return Node(
-      point: medianPoint,
-      left: _recursivelyBuild(points.sublist(0, medianIdx), depth + 1, k),
-      right: _recursivelyBuild(points.sublist(medianIdx + 1), depth + 1, k),
-    );
+    final int d = depth + 1;
+    final Node? l = _recursivelyBuild(points, k, start, medianIdx - 1, d);
+    final Node? r = _recursivelyBuild(points, k, medianIdx + 1, end, d);
+
+    return Node(point: medianPoint, left: l, right: r);
   }
 
-  /// Performs a range search around a query point.
+  /// Performs an optimized range search around a query point.
   ///
   /// This method finds all points in the tree that are within the specified
-  /// radius of the query point.
+  /// radius of the query point using an iterative approach with squared distance
+  /// comparisons for maximum performance.
+  ///
+  /// **Performance:** O(log n + k) where k is the number of points found.
   ///
   /// Parameters:
   ///
@@ -135,66 +167,48 @@ class KDTree {
       );
     }
 
-    return _recursiveRangeSearch(root, queryPoint, radius, 0);
+    final List<SpatialPoint> results = _iterativeRS(
+      queryPoint,
+      radius,
+    );
+
+    return results;
   }
 
-  /// Recursively searches for points within the specified radius.
-  ///
-  /// This is a helper method for [rangeSearch] that traverses the tree
-  /// recursively.
-  ///
-  /// Parameters:
-  ///
-  ///   - [node]: The current node being examined.
-  ///   - [queryPoint]: The center point of the search.
-  ///   - [radius]: The search radius.
-  ///   - [depth]: The current depth in the tree, used to determine the
-  ///     splitting dimension.
-  List<SpatialPoint> _recursiveRangeSearch(
-    final Node? node,
-    final SpatialPoint queryPoint,
-    final double radius,
-    final int depth,
-  ) {
+  List<SpatialPoint> _iterativeRS(final SpatialPoint p, final double r) {
     final List<SpatialPoint> results = <SpatialPoint>[];
-    if (node == null) {
-      return results;
-    }
+    final List<(Node, int)> stack = <(Node, int)>[(root!, 0)];
 
-    final int axis = depth % k;
+    final double squaredRadiusThreshold = p.getSquaredRadiusThreshold(r);
 
-    // Check if current node's point is within radius
-    if (node.point.distanceTo(queryPoint) <= radius) {
-      results.add(node.point);
-    }
+    while (stack.isNotEmpty) {
+      final (Node node, int depth) = stack.removeLast();
+      final int axis = depth % k;
 
-    // Determine which subtree(s) to search
-    final double axisDistance =
-        queryPoint.atDimension(axis) - node.point.atDimension(axis);
+      final double pointAxisDimension = p.atDimension(axis);
+      final double nodeAxisDimension = node.point.atDimension(axis);
+      final double distSq = node.point.squaredDistanceComparisonValue(p);
+      final double radius = p.convertRadiusToDimensionUnits(r, axis);
 
-    if (axisDistance <= 0) {
-      // Query point is on the left side, so we must search left subtree
-      results.addAll(
-        _recursiveRangeSearch(node.left, queryPoint, radius, depth + 1),
-      );
-
-      // Only search right subtree if it could contain points within radius
-      if (axisDistance.abs() <= radius) {
-        results.addAll(
-          _recursiveRangeSearch(node.right, queryPoint, radius, depth + 1),
-        );
+      if (distSq <= squaredRadiusThreshold) {
+        results.add(node.point);
       }
-    } else {
-      // Query point is on the right side, so we must search right subtree
-      results.addAll(
-        _recursiveRangeSearch(node.right, queryPoint, radius, depth + 1),
-      );
 
-      // Only search left subtree if it could contain points within radius
-      if (axisDistance <= radius) {
-        results.addAll(
-          _recursiveRangeSearch(node.left, queryPoint, radius, depth + 1),
-        );
+      final int d = depth + 1;
+      if (node.left != null) {
+        if (pointAxisDimension <= nodeAxisDimension) {
+          stack.add((node.left!, d));
+        } else if (pointAxisDimension - radius <= nodeAxisDimension) {
+          stack.add((node.left!, d));
+        }
+      }
+
+      if (node.right != null) {
+        if (pointAxisDimension >= nodeAxisDimension) {
+          stack.add((node.right!, d));
+        } else if (pointAxisDimension + radius >= nodeAxisDimension) {
+          stack.add((node.right!, d));
+        }
       }
     }
 

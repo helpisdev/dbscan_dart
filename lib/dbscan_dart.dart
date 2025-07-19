@@ -13,3 +13,4 @@ export 'src/models/clustering_result.dart';
 export 'src/models/lat_lng_point.dart';
 export 'src/models/point_id.dart';
 export 'src/models/spatial_point.dart';
+export 'src/quickselect.dart';

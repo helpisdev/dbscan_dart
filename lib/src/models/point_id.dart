@@ -13,11 +13,9 @@ class PointId {
   final int value;
 
   @override
-  bool operator ==(final Object other) =>
-      identical(this, other) ||
-      other is PointId &&
-          runtimeType == other.runtimeType &&
-          value == other.value;
+  bool operator ==(final Object other) {
+    return other is PointId && value == other.value;
+  }
 
   @override
   int get hashCode => value.hashCode;

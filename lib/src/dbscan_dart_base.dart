@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:collection';
+import 'dart:isolate';
+
 import 'kdtree.dart';
 import 'models/cluster_id.dart';
 import 'models/cluster_label.dart';
@@ -19,10 +23,18 @@ import 'models/spatial_point.dart';
 ///
 /// The algorithm works by:
 ///
-///   1. Finding all core points and their neighborhoods.
-///   2. Connecting core points that are within [eps] distance of each other.
-///   3. Forming clusters from connected core points and their border points.
-///   4. Labeling remaining points as noise.
+///   1. Building an optimized KD-Tree for O(log n) range queries.
+///   2. Finding all core points and their neighborhoods using spatial indexing.
+///   3. Connecting core points that are within [eps] distance of each other.
+///   4. Forming clusters using efficient queue-based seed expansion.
+///   5. Labeling remaining points as noise.
+///
+/// **Performance Characteristics:**
+///
+/// - **Time Complexity:** O(n log n) average case with KD-Tree optimization
+/// - **Space Complexity:** O(n) for the spatial index and clustering state
+/// - **Tree Construction:** O(n log n) using Floyd-Rivest quickselect
+/// - **Range Queries:** O(log n + k) where k is the number of neighbors found
 ///
 /// DBSCAN is particularly useful for:
 ///
@@ -128,11 +140,19 @@ class DBScan {
       clusters[clusterID]!.add(point);
 
       // Process neighbors (seed set expansion)
-      final List<SpatialPoint> seedSet = <SpatialPoint>[...neighbors]
-        ..remove(point);
+      final Queue<SpatialPoint> seedQueue = Queue<SpatialPoint>.from(neighbors);
+      final Set<PointId> seedSet = <PointId>{};
 
-      while (seedSet.isNotEmpty) {
-        final SpatialPoint currentPoint = seedSet.removeAt(0);
+      // Remove current point and add neighbors to tracking set
+      seedQueue.remove(point);
+      for (final SpatialPoint neighbor in neighbors) {
+        if (neighbor.id() != point.id()) {
+          seedSet.add(neighbor.id());
+        }
+      }
+
+      while (seedQueue.isNotEmpty) {
+        final SpatialPoint currentPoint = seedQueue.removeFirst();
         final PointId currentID = currentPoint.id();
 
         // Skip already processed points (except noise, which can be "rescued")
@@ -154,10 +174,12 @@ class DBScan {
         // If this is a core point, add its neighbors to the seed set
         if (pointNeighbors.length >= minPoints) {
           for (final SpatialPoint neighbor in pointNeighbors) {
-            if (labels[neighbor.id()] == ClusterLabel.undefined ||
-                labels[neighbor.id()] == ClusterLabel.noise) {
-              if (!seedSet.contains(neighbor)) {
-                seedSet.add(neighbor);
+            final PointId neighborId = neighbor.id();
+            if (labels[neighborId] == ClusterLabel.undefined ||
+                labels[neighborId] == ClusterLabel.noise) {
+              final bool added = seedSet.add(neighborId);
+              if (added) {
+                seedQueue.add(neighbor);
               }
             }
           }
@@ -168,5 +190,68 @@ class DBScan {
     }
 
     return ClusteringResult(clusters: clusters, labels: labels);
+  }
+
+  void _isolate(final SendPort sendPort) {
+    final ReceivePort receivePort = ReceivePort();
+    sendPort.send(receivePort.sendPort);
+
+    receivePort.listen(
+      (final Object? message) {
+        if (message is Map<String, dynamic>) {
+          final List<SpatialPoint> points = message['points'];
+          final double eps = message['eps'];
+          final int minPoints = message['minPoints'];
+
+          final DBScan dbscan = DBScan(eps: eps, minPoints: minPoints);
+          final ClusteringResult result = dbscan.run(points: points);
+
+          sendPort.send(result);
+        }
+      },
+    );
+  }
+
+  /// Performs DBSCAN clustering in a separate isolate for CPU-intensive tasks.
+  ///
+  /// This method is useful for large datasets where clustering might block the
+  /// main thread. The clustering computation runs in a separate isolate, allowing
+  /// the UI to remain responsive.
+  ///
+  /// Parameters:
+  ///
+  /// - [points]: The collection of points to cluster.
+  ///
+  /// Returns a [Future] that completes with the [ClusteringResult].
+  ///
+  /// **Note:** This method has additional overhead due to isolate communication.
+  /// Use [run] for smaller datasets or when isolate overhead is not justified.
+  Future<ClusteringResult> runInIsolate({
+    required final List<SpatialPoint> points,
+  }) async {
+    final ReceivePort receivePort = ReceivePort();
+    final Isolate isolate = await Isolate.spawn(_isolate, receivePort.sendPort);
+
+    final Completer<ClusteringResult> completer = Completer<ClusteringResult>();
+
+    receivePort.listen(
+      (final Object? message) {
+        if (message is SendPort) {
+          message.send(
+            <String, dynamic>{
+              'points': points,
+              'eps': eps,
+              'minPoints': minPoints,
+            },
+          );
+        } else if (message is ClusteringResult) {
+          completer.complete(message);
+          receivePort.close();
+          isolate.kill(priority: Isolate.immediate);
+        }
+      },
+    );
+
+    return completer.future;
   }
 }

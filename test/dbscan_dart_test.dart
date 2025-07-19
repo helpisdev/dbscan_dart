@@ -388,10 +388,31 @@ class _TestPoint implements SpatialPoint {
   double distanceTo(final SpatialPoint other) => 0;
 
   @override
+  double squaredDistanceComparisonValue(final SpatialPoint other) => 0;
+
+  @override
+  double getSquaredRadiusThreshold(final double radius) => 0;
+
+  @override
+  double convertRadiusToDimensionUnits(
+    final double radius,
+    final int dimensionIndex,
+  ) =>
+      0;
+
+  @override
   int dimension() => -1;
 
   @override
   double atDimension(final int d) => 0;
+
+  @override
+  bool operator ==(final Object other) {
+    return other is _TestPoint && id() == other.id();
+  }
+
+  @override
+  int get hashCode => id().hashCode;
 }
 
 /// Test point with custom dimension
@@ -409,8 +430,29 @@ class _TestPointWithDimension implements SpatialPoint {
   double distanceTo(final SpatialPoint other) => 0;
 
   @override
+  double squaredDistanceComparisonValue(final SpatialPoint other) => 0;
+
+  @override
+  double getSquaredRadiusThreshold(final double radius) => 0;
+
+  @override
+  double convertRadiusToDimensionUnits(
+    final double radius,
+    final int dimensionIndex,
+  ) =>
+      0;
+
+  @override
   int dimension() => dim;
 
   @override
   double atDimension(final int d) => 0;
+
+  @override
+  bool operator ==(final Object other) {
+    return other is _TestPointWithDimension && id() == other.id();
+  }
+
+  @override
+  int get hashCode => id().hashCode;
 }

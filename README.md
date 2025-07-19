@@ -5,14 +5,16 @@
 [![popularity](https://img.shields.io/pub/popularity/dbscan_dart)](https://pub.dev/packages/dbscan_dart/score)
 [![likes](https://img.shields.io/pub/likes/dbscan_dart)](https://pub.dev/packages/dbscan_dart/score)
 
-A high-performance, pure-Dart implementation of the DBSCAN clustering algorithm with spatial optimization. This library works with any data type that implements the `SpatialPoint` interface, requiring only `id()`, `distanceTo(SpatialPoint)`, `dimension()`, and `atDimension(int)` methods-making it versatile for n-D, geospatial, or custom distance metrics.
+A high-performance, pure-Dart implementation of the DBSCAN clustering algorithm with advanced spatial optimization. This library works with any data type that implements the `SpatialPoint` interface, featuring optimized distance calculations and spatial indexing for maximum performance on large datasets.
 
 ## ✨ Features
 
-- **🔍 KD-Tree & Grid Optimization** - Dramatically improves performance on large datasets through spatial indexing
-- **🧩 Flexible Point Interface** - Cluster any data type by implementing a simple interface
-- **🔄 Efficient Expansion Algorithm** - Uses optimized seed-set expansion with duplicate tracking
-- **🛡️ Border Point Handling** - Smart border point detection prevents misclassification as noise
+- **🚀 Optimized KD-Tree Construction** - Uses Floyd-Rivest quickselect for O(n log n) tree building with minimal memory allocation
+- **⚡ Fast Range Search** - Iterative search with squared distance comparisons avoids expensive sqrt operations
+- **🧩 Enhanced Point Interface** - Flexible interface with optimized distance methods for maximum performance
+- **🔄 Efficient Seed Expansion** - Queue-based expansion with O(1) duplicate detection using Set tracking
+- **🛡️ Smart Border Point Handling** - Optimized border point detection prevents misclassification as noise
+- **🔀 Parallel Processing** - Built-in isolate support for CPU-intensive clustering tasks
 - **📊 Comprehensive Results** - Returns both per-cluster point collections and per-point cluster assignments
 
 ## Credits and Attribution
