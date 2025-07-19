@@ -3,6 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2025-07-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`dbscan_dart` - `v2.0.0`](#dbscan_dart---v200)
+
+Packages with other changes:
+
+ - There are no other changes in this release.
+
+---
+
+#### `dbscan_dart` - `v2.0.0`
+
+ - **BREAKING** **FEAT**: major performance overhaul with breaking SpatialPoint interface changes. ([338254a5](https://github.com/helpisdev/dbscan_dart.git/commit/338254a5ef81fdd6eb2b84d3f9ac56107655b18f))
+
+## 2.0.0
+
+> Note: This release has breaking changes.
+
+ - **BREAKING** **FEAT**: major performance overhaul with breaking SpatialPoint interface changes. ([338254a5](https://github.com/helpisdev/dbscan_dart.git/commit/338254a5ef81fdd6eb2b84d3f9ac56107655b18f))
+
+
 ## 2025-06-11
 
 ### Changes
