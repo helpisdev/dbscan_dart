@@ -21,6 +21,8 @@ A high-performance, pure-Dart implementation of the DBSCAN clustering algorithm 
 
 This package is heavily based on the work done in [mojixcoder/dbscan](https://github.com/mojixcoder/dbscan), with optimizations and adaptations for Dart.
 
+The Floyd-Rivest quickselect algorithm implementation is adapted from [Zverik/dart_rbush](https://github.com/Zverik/dart_rbush), originally by Ilya Zverev (2021) and Vladimir Agafonkin (2018), used under ISC license.
+
 For those interested in understanding the DBSCAN algorithm in depth:
 
 - [Visual explanation of DBSCAN by Computerphile](https://www.youtube.com/watch?v=RDZUdRSDOok)
