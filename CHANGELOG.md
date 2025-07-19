@@ -11,6 +11,31 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 Packages with breaking changes:
 
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`dbscan_dart` - `v2.0.1`](#dbscan_dart---v201)
+
+---
+
+#### `dbscan_dart` - `v2.0.1`
+
+ - **DOCS**: add proper attribution for Floyd-Rivest quickselect algorithm. ([3ac91310](https://github.com/helpisdev/dbscan_dart.git/commit/3ac913103a6a6466d657682f8c73322b977e1258))
+
+## 2.0.1
+
+ - **DOCS**: add proper attribution for Floyd-Rivest quickselect algorithm. ([3ac91310](https://github.com/helpisdev/dbscan_dart.git/commit/3ac913103a6a6466d657682f8c73322b977e1258))
+
+
+## 2025-07-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
  - [`dbscan_dart` - `v2.0.0`](#dbscan_dart---v200)
 
 Packages with other changes:
